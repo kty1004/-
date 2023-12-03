@@ -2,12 +2,12 @@
 네이버 프로필 사진을 학습하여 연예인 사진을 크롤링 하는 프로그램입니다.
 ## 간단한 작동방식
 1. 연예인 사진을 크롤링하기 위해 해당 인물의 네이버 프로필 사진을 수집하고, 이를 [face recognition](https://github.com/ageitgey/face_recognition/blob/master/README_Korean.md)으로 학습합니다.
-2. 네이버 검색 api를 사용하여 연애인 이름을 검색하여 뜨는 사진을 전부 다운로드한다음, face recognition을 사용하여 해당 인물이 맞는지와 해당 인물만 있는지 확인합니다.
+2. 네이버 검색 api를 사용하여 연애인 이름을 검색하여 뜨는 사진을 전부 다운로드한다음, [face recognition](https://github.com/ageitgey/face_recognition/blob/master/README_Korean.md)을 사용하여 해당 인물이 맞는지와 해당 인물만 있는지 확인합니다.
 3. 해당 인물이 맞다면 해당 사진을 저장하고, 아니면 삭제합니다.
 ---
 ## 사용법
 ### A. 네이버 검색 api 키 발급
-1. [네이버 게발자 센트](https://developers.naver.com/main/)에서 키를 발급받습니다.
+1. [네이버 게발자 센터](https://developers.naver.com/main/)에서 키를 발급받습니다.
 2. 이를 환경변수에 등록합니다.
 #### Windows에서 환경 변수 설정
 1. 제어판 -> 시스템 -> 고급 시스템 설정 -> 환경 변수

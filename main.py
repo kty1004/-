@@ -15,7 +15,7 @@ def Integration_process_crawling_names(search_name_list: list, start: int, displ
 
 
 # img_results에 특정 이름을 포함하는 사진 파일의 개수를 센다.
-search_name_list=file_manager.read_textFile_and_convert_list('연예인_이름.txt')
+search_name_list=file_manager.read_textFile_and_convert_list('Celebrity_name.txt')
 img_results_dir='img_results'
 num_img_want_to_crawl=5
 start=1

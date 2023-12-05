@@ -168,3 +168,6 @@ test/
 naver_profile/
 img_source/
 img_results/
+
+# text
+.txt

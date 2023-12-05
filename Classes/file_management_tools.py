@@ -56,7 +56,7 @@ class File_manager(File_name_manager):
         return stripped_lines
 
     def delete_files_in_folder(self, folder_path: str, target_file_path_list: list):
-        '''폴더 내의 파일들을 name_list에 있는 파일만 제거'''
+        '''폴더 내의 파일들을 target_file_path_list에 있는 파일만 제거'''
         file_paths = self.get_image_file_paths_in_folder(folder_path)
         for file_path in file_paths:
             if file_path in target_file_path_list:

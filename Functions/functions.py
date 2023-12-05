@@ -7,7 +7,7 @@ face_endcoding_tools = face_endcoding_tools()
 naver_search = naver_search()
 file_manager = File_manager()
 file_name_manager = File_name_manager()
-
+import random
 
 def naver_profile_crawling(name_list:list, img_num:int = 15):
     '''naver_profile 폴더에 네이버 프로필을 수집한다. 이후 본격적으로 네이버에서 프로필 주인 사진을 찾기 위해 필요한 사람들의 이름을 반환한다.'''
@@ -147,3 +147,40 @@ def check_dict_values_goal(dictionary, goal):
         if value < goal:
             return False
     return True
+
+# 특정 문자를 포함하는 문자열을 찾는 함수
+def find_strings_with_char(list, char):
+    return [string for string in list if char in string]
+
+
+def img_num_flatten(dir: str, flatten_num: int, name_list: list):
+    ''' flatten_target인 사람의 원래 사진 분포에서 num을 가지고 와서 그 수의 범위에서 랜덤으로 num-random수를 뽑는다. 그리고 그 수에 해당하는 사진을 제거한다.'''
+    img_results_distribution=file_manager.get_num_of_same_H_img(dir,name_list)
+    files_path=file_manager.get_image_file_paths_in_folder(dir)
+    flatten_target_person_dict={}
+    for key,value in img_results_distribution.items():
+        if value > flatten_num:
+            flatten_target_person_dict[key]=value
+    
+    # 랜덤으로 제거할 파일 경로 리스트를 만들기 위해서 파일 경로에 포함된 인덱스를 사용할 것이다.
+    for key,value in flatten_target_person_dict.items():
+        delete_img_index_list=[]
+        for index in range(value-1-flatten_num-1):
+            '''value랑 마찬가지로 flatten_num은 인덱스가 아니라 개수이므로, value-1-flatten_num-1을 해줘야 한다.'''
+            while True:
+                '''random.randint(a,b)는 a와 b를 포함한 a~b 사이의 정수를 랜덤으로 반환한다. while문을 사용한 이유은 중복되는 delete_img_index_list에 index를 제거하기 위해서이다.'''
+                random_index=random.randint(0,value-1)
+                if random_index not in delete_img_index_list:
+                    delete_img_index_list.append(random_index)
+                    break
+        print('delete_img_index_list :',delete_img_index_list, 'len(delete_img_index_list) :',len(delete_img_index_list))
+        having_key_files_path_list=find_strings_with_char(files_path,key)
+
+        # 제거할 파일 경로 리스트
+        delete_imgs_path=[]
+        for delete_img_index in delete_img_index_list:
+            '''delete_img_index_list에 있는 index에 해당하는 파일 경로를 delete_imgs_path에 추가'''
+            delete_imgs_path.append(having_key_files_path_list[delete_img_index])
+
+        # 파일 제거
+        file_manager.delete_files_in_folder(dir,delete_imgs_path)

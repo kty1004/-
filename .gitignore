@@ -170,5 +170,4 @@ img_source/
 img_results/
 
 # text
-.txt
-*.txt
+Celebrity_name.txt

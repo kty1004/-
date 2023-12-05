@@ -1,4 +1,4 @@
-from Functions.functions import naver_profile_crawling,manage_and_crawing_image, check_dict_values_goal
+from Functions.functions import naver_profile_crawling,manage_and_crawing_image, check_dict_values_goal, img_num_flatten, rename_files_in_dir_ordered
 from Classes.file_management_tools import File_manager
 import os
 
@@ -17,7 +17,7 @@ def Integration_process_crawling_names(search_name_list: list, start: int, displ
 # img_results에 특정 이름을 포함하는 사진 파일의 개수를 센다.
 search_name_list=file_manager.read_textFile_and_convert_list('Celebrity_name.txt')
 img_results_dir='img_results'
-num_img_want_to_crawl=5
+num_img_want_to_crawl=3
 start=1
 display_info=15
 modified_search_name_list=search_name_list # 이미 목표치(num_img_want_to_crawl)를 달성한 이름들은 modified_search_name_list에서 제거한다.
@@ -41,5 +41,10 @@ while True:
                 modified_search_name_list.remove(key)
                 print(f'{key}는 이미 목표치를 달성했습니다. {key}를 제외한 나머지 사람들의 이미지를 추가로 수집합니다.')
             print('다음 번에 또 크롤링할 사람들 :',modified_search_name_list)
-                
-                
+
+# img 개수 flatten
+print('\n','img_results 폴더 안의 사진 수를 균일하게 맞추겠습니다.')
+img_num_flatten(img_results_dir, num_img_want_to_crawl, search_name_list)
+img_distribution_after_flatten=file_manager.get_num_of_same_H_img(img_results_dir,real_crawling_names)
+rename_files_in_dir_ordered(img_results_dir,search_name_list)
+print('img_results 폴더 정리 후 사진 분포입니다.',img_distribution_after_flatten)

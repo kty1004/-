@@ -173,7 +173,6 @@ def img_num_flatten(dir: str, flatten_num: int, name_list: list):
                 if random_index not in delete_img_index_list:
                     delete_img_index_list.append(random_index)
                     break
-        print('delete_img_index_list :',delete_img_index_list, 'len(delete_img_index_list) :',len(delete_img_index_list))
         having_key_files_path_list=find_strings_with_char(files_path,key)
 
         # 제거할 파일 경로 리스트

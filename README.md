@@ -5,6 +5,11 @@
 2. 네이버 검색 api를 사용하여 연애인 이름을 검색하여 뜨는 사진을 전부 다운로드한다음, [face recognition](https://github.com/ageitgey/face_recognition/blob/master/README_Korean.md)을 사용하여 해당 인물이 맞는지와 해당 인물만 있는지 확인합니다.
 3. 해당 인물이 맞다면 해당 사진을 저장하고, 아니면 삭제합니다.
 ---
+## 코린이들을 위한 Colab version
+Colab에서도 사용할 수 있도록 만들었습니다. [이 링크](Celebrity_solo_shot_collector_for_Colab.ipynb)
+를 클릭하면 Colab에서 사용할 수 있는 파일이 열립니다.
+
+---
 ## 사용법
 ### A. 네이버 검색 api 키 발급
 1. [네이버 게발자 센터](https://developers.naver.com/main/)에서 키를 발급받습니다.
@@ -30,12 +35,14 @@ export NAVER_CRAWLER_CLIENT_PASSWORD='your_client_password'
 source ~/.bash_profile  # bash를 사용하는 경우
 source ~/.zshrc  # zsh를 사용하는 경우
 ```
+
 ### B. 크롤링할 연예인 이름 설정
 **Celebrity_name.txt** 파일에 크롤링할 연예인 이름을 한 줄에 하나씩 입력합니다.
 > 이 때 Celebrity_name.txt파일은 root 폴더에 위치해야 합니다.
 
 ### C. 프로그램 실행
 main.py를 실행하기만 하면 됩니다. 
+
 ---
 ## 기타 설명
 ### 생성되는 폴더 설명

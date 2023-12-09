@@ -66,9 +66,10 @@ class naver_search:
         url = f"https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query={quote(search_name)}"
 
         # 웹 페이지를 가져옴
-        response = requests.get(url, verify=certifi.where())
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"}
+        response = requests.get(url, verify=certifi.where(), headers=headers)
         if response.status_code != 200:
-            print('invalid url:', response.url)
+            print('status code:', response.status_code)
             raise Exception('invalid url:', response.url)
         soup=BeautifulSoup(response.text, 'html.parser')
         #profile_a=soup.find('a', data_id='main_profile')

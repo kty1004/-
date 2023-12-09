@@ -17,9 +17,9 @@ def Integration_process_crawling_names(search_name_list: list, start: int, displ
 # img_results에 특정 이름을 포함하는 사진 파일의 개수를 센다.
 search_name_list=file_manager.read_textFile_and_convert_list('Celebrity_name.txt')
 img_results_dir='img_results'
-num_img_want_to_crawl=3
+num_img_want_to_crawl=2
 start=1
-display_info=15
+display_info=5
 modified_search_name_list=search_name_list # 이미 목표치(num_img_want_to_crawl)를 달성한 이름들은 modified_search_name_list에서 제거한다.
 while True:
     print(f'{start}번째 item부터 {start+display_info-1}번째 item까지를 수집합니다.')
@@ -47,4 +47,4 @@ print('\n','img_results 폴더 안의 사진 수를 균일하게 맞추겠습니
 img_num_flatten(img_results_dir, num_img_want_to_crawl, search_name_list)
 img_distribution_after_flatten=file_manager.get_num_of_same_H_img(img_results_dir,real_crawling_names)
 rename_files_in_dir_ordered(img_results_dir,search_name_list)
-print('img_results 폴더 정리 후 사진 분포입니다.',img_distribution_after_flatten)
+print('\n','img_results 폴더 정리 후 사진 분포입니다.',img_distribution_after_flatten)

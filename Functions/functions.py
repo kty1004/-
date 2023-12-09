@@ -1,4 +1,3 @@
-from math import e
 from Classes.file_management_tools import File_manager, File_name_manager
 from Classes.face_recog_tools import face_endcoding_tools
 from Classes.Search import naver_search
@@ -24,6 +23,7 @@ def naver_profile_crawling(name_list:list, img_num:int = 15):
     if not search_name_list:
         print('네이버 프로필을 이미 다 확보했습니다.')
         return name_list
+    
     else:
         search_status_list=[]
         for search_name in search_name_list:
@@ -92,6 +92,19 @@ def manage_and_crawing_image(search_name_list,client_id: str,client_password: st
     # face encoding
     ## known faces encoding
     known_faces_encodings=face_endcoding_tools.oneface_encoding_onebyone(profile_dirs)
+    invalid_profile_dir_in_known_faces_encodings=[] # known_faces_encodings 중에서 프로필이 제대로 인코딩되지 않은 인덱스를 저장할 리스트
+    ### known_faces_encodings의 형태가 (128,)이 아닐 경우, (128,)로 바꿔준다.
+    for i, face_encoding in enumerate(known_faces_encodings):
+        if face_encoding is None:
+            # face_encoding이 None인 경우.
+            print(profile_dirs[i],'를 인코딩하는데 실패했습니다.')
+            invalid_profile_dir_in_known_faces_encodings.append(profile_dirs[i])
+            known_faces_encodings[i]=None
+   
+        elif face_encoding.shape != (128,):
+            # face_encoding이 128개의 요소를 가진 1차원 배열이 아닌 경우, 이를 올바른 모양으로 변환한다.
+            known_faces_encodings[i] = face_encoding[:128]
+
 
     ## unknown faces encoding
     unknown_faces_encodings=face_endcoding_tools.each_face_endcodings_eachbyone(img_source_dirs)
@@ -105,25 +118,34 @@ def manage_and_crawing_image(search_name_list,client_id: str,client_password: st
     treasure_of_source=[] # img_source_dirs 중에서 아는 사람이 있는 사진들의 경로를 저장할 리스트
     trash_of_source=[] # img_source_dirs 중에서 아는 사람이 없는 사진들의 경로를 저장할 리스트
 
-    known_faces_index=0
     for index,unknown_faces_image in enumerate(unknown_faces_encodings):
         '''어차피 img_source_dirs와 unknown_faces_encodings의 인덱스는 같으므로 index를 사용한다.'''
 
         face_count=face_endcoding_tools.count_faces_in_image(img_source_dirs[index]) # unknown_faces_image[0]은 unknown_faces_encodings의 인덱스를 의미한다.
         if face_count>1:
             trash_of_source.append(img_source_dirs[index])
-        else:
-            if not unknown_faces_image:
-                '''가끔 unknown_faces_image에 얼굴이 없는 경우가 있다. 이 경우에는 unknown_faces_image[0]의 형태가 []이므로 이 경우를 제외하고 진행한다.'''
-                continue
-            unknown_face=unknown_faces_image[0] # 사진에 사람이 한 명만 있으면 unknown_faces_image의 형태는 [face_encoding]이므로 [face_encoding]을 face_encoding으로 바꿔준다.
-            result = face_recognition.compare_faces(known_faces_encodings, unknown_face) # 알려진 얼굴 인코딩 리스트가 3개의 요소를 가지고 있고, 알 수 없는 얼굴 인코딩이 첫 번째와 세 번째 알려진 얼굴과 일치한다면, 반환값은 [True, False, True]가 된다.
-            if result[known_faces_index] ==False: # 현재 찾고자 하는 사람이 사진에 존재하지 않을 경우 trash_of_source에 저장한다.
-                #print("- img_source에서 건진 파일의 경로: {}".format(img_source_dirs[index]))
-                trash_of_source.append(img_source_dirs[index])
-            else:
-                #print("- img_source에서 건진 파일의 경로: {}".format(img_source_dirs[index]))
+            continue
+        if not unknown_faces_image:
+            '''가끔 unknown_faces_image에 얼굴이 없는 경우가 있다. 이 경우에는 unknown_faces_image[0]의 형태가 []이므로 이 경우를 제외하고 진행한다.'''
+            continue
+        unknown_face=unknown_faces_image[0] # 사진에 사람이 한 명만 있으면 unknown_faces_image의 형태는 [face_encoding]이므로 [face_encoding]을 face_encoding으로 바꿔준다.
+
+        # unknown_face의 형태가 (128,)이 아닐 경우, (128,)로 바꿔준다.
+        if unknown_face.shape!=(128,):
+            unknown_face=unknown_face[:128]
+
+        known_faces_encodings_without_None=[face_encoding for face_encoding in known_faces_encodings if face_encoding is not None] # known_faces_encodings에서 None이 있는 경우 이를 제외한다.
+        result = face_recognition.compare_faces(known_faces_encodings_without_None, unknown_face) # 알려진 얼굴 인코딩 리스트가 3개의 요소를 가지고 있고, 알 수 없는 얼굴 인코딩이 첫 번째와 세 번째 알려진 얼굴과 일치한다면, 반환값은 [True, False, True]가 된다.
+
+        if True not in result: # 아는 사람이 없을 경우 이 때는 profile이 제대로 encoding되지 않은 경우이거나, unknown_face에 모르는 사람만이 있는 경우다.
+            if img_source_dirs[index] in invalid_profile_dir_in_known_faces_encodings:
+                #invalid_profile이면 trash_of_source에 저장하지 않고, treasure_of_source에 저장한다.
                 treasure_of_source.append(img_source_dirs[index])
+            else:
+                # unknown_face에 모르는 사람만 있는 경우
+                trash_of_source.append(img_source_dirs[index])
+        else:
+            treasure_of_source.append(img_source_dirs[index])
 
     #print('\n','treasure_of_source :',treasure_of_source)
     #print('trash_of_source :',trash_of_source, '\n')
@@ -165,8 +187,7 @@ def img_num_flatten(dir: str, flatten_num: int, name_list: list):
     # 랜덤으로 제거할 파일 경로 리스트를 만들기 위해서 파일 경로에 포함된 인덱스를 사용할 것이다.
     for key,value in flatten_target_person_dict.items():
         delete_img_index_list=[]
-        for index in range(value-1-flatten_num-1):
-            '''value랑 마찬가지로 flatten_num은 인덱스가 아니라 개수이므로, value-1-flatten_num-1을 해줘야 한다.'''
+        for index in range(value-flatten_num):
             while True:
                 '''random.randint(a,b)는 a와 b를 포함한 a~b 사이의 정수를 랜덤으로 반환한다. while문을 사용한 이유은 중복되는 delete_img_index_list에 index를 제거하기 위해서이다.'''
                 random_index=random.randint(0,value-1)

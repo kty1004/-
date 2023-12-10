@@ -8,6 +8,7 @@ client_password=os.getenv('NAVER_CRAWLER_CLIENT_PASSWORD')
 file_manager=File_manager()
 
 def Integration_process_crawling_names(search_name_list: list, start: int, display_info:int):
+    '''전체 크롤링 과정을 통합한다. 실제로 크롤링을 진행하는 함수이고, 크롤링을 진행한 사람들의 이름을 반환한다. 크롤링이 진행되지 않는 사람들은 반환하지 않는다.'''
     real_seach_names=naver_profile_crawling(search_name_list) # real_seach_names는 네이버 프로필을 찾은 사람들의 이름들을 반환한다. 네이버 프로필을 찾지 못한 사람들의 경우 이름이 잘못되었거나, 네이버 프로필이 없는 경우이다. 이들은 제외한 체로 이미지를 크롤링한다.
 
     manage_and_crawing_image(display_info=display_info, start=start, search_name_list=real_seach_names, client_id=client_id, client_password=client_password)
@@ -22,6 +23,7 @@ start=1
 display_info=5
 modified_search_name_list=search_name_list # 이미 목표치(num_img_want_to_crawl)를 달성한 이름들은 modified_search_name_list에서 제거한다.
 while True:
+    '''한 번의 크롤링으로 목표한 사진 수를 달성하지 못한 경우, 추가적으로 크롤링을 하기 위해 while문을 사용한다.'''
     print(f'{start}번째 item부터 {start+display_info-1}번째 item까지를 수집합니다.')
     real_crawling_names=Integration_process_crawling_names(modified_search_name_list,display_info=display_info,start=start)
     img_results__distribution=file_manager.get_num_of_same_H_img(img_results_dir,real_crawling_names)
@@ -44,7 +46,7 @@ while True:
 
 # img 개수 flatten
 print('\n','img_results 폴더 안의 사진 수를 균일하게 맞추겠습니다.')
-img_num_flatten(img_results_dir, num_img_want_to_crawl, search_name_list)
+img_num_flatten(img_results_dir, num_img_want_to_crawl, search_name_list) # 폴더 안의 사진 수를 균일하게 맞춤(flatten)
 img_distribution_after_flatten=file_manager.get_num_of_same_H_img(img_results_dir,real_crawling_names)
 rename_files_in_dir_ordered(img_results_dir,search_name_list)
 print('\n','img_results 폴더 정리 후 사진 분포입니다.',img_distribution_after_flatten)

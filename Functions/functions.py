@@ -45,6 +45,7 @@ def naver_profile_crawling(name_list:list, img_num:int = 15):
             return list(set(name_list)-set(fail_search_name_list)) # 찾지 못한 사람들을 제외한 사람들의 이름을 반환
         
 def rename_files_in_dir_ordered(img_results_dir: str, search_name_list: list):
+    '''img_results_dir에 있는 파일들의 이름을 search_name_list에 있는 이름을 가지고 있으면 이름_0,1,2,3... 순서대로 이름을 바꾼다.'''
     # renaming files in img_results_dir
     results_file_names=file_name_manager.get_file_names_in_folder_without_ext(img_results_dir) # img_results_dir에 있는 파일들의 이름들을 리스트로 반환
     results_file_path=file_name_manager.get_file_names_in_folder(img_results_dir) # img_results_dir에 있는 파일들의 경로들을 리스트로 반환
